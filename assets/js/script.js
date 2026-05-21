@@ -128,6 +128,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Page Visibility Logic ---
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+            }
+        } else {
+            if (isMusicPlaying) {
+                bgMusic.play().catch(err => console.log("Resume blocked by browser", err));
+            }
+        }
+    });
+
 
     // --- Countdown Timer ---
     // Target date: Thursday, 28th May 2026 14:30:00 (2:30 PM)
