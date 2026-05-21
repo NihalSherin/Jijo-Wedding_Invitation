@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const openBtn = document.getElementById('open-btn');
     const mainContent = document.getElementById('main-content');
     const bottomNav = document.getElementById('bottom-nav');
-    const bgMusic = document.getElementById('bg-music');
     const musicToggle = document.getElementById('music-toggle');
     const iconPlay = document.getElementById('icon-play');
     const iconPause = document.getElementById('icon-pause');
@@ -91,20 +90,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500); 
     });
 
-    // --- Music Toggle Logic ---
+    // --- Web Audio API for background music without lock screen controls ---
+    let audioContext;
+    let audioBuffer;
+    let sourceNode;
+    let audioInitialized = false;
+
+    async function initAudio() {
+        if (audioInitialized) return;
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        try {
+            const response = await fetch('assets/audio/golden_hour.mp3');
+            const arrayBuffer = await response.arrayBuffer();
+            audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            audioInitialized = true;
+        } catch (error) {
+            console.error('Error loading audio:', error);
+        }
+    }
+
+    // Call initAudio early to start downloading the audio file
+    initAudio();
+
     function playMusic() {
-        bgMusic.play().then(() => {
-            isMusicPlaying = true;
-            updateMusicIcons();
-        }).catch(err => {
-            console.log("Autoplay blocked by browser. User needs to interact first.", err);
-            isMusicPlaying = false;
-            updateMusicIcons();
-        });
+        if (!audioInitialized) {
+            // Wait for it if not loaded yet
+            initAudio().then(() => {
+                if (audioBuffer) startAudio();
+            });
+        } else {
+            startAudio();
+        }
+    }
+
+    function startAudio() {
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        } else if (!sourceNode) {
+            sourceNode = audioContext.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            sourceNode.loop = true;
+            sourceNode.connect(audioContext.destination);
+            sourceNode.start(0);
+        }
+        isMusicPlaying = true;
+        updateMusicIcons();
     }
 
     function pauseMusic() {
-        bgMusic.pause();
+        if (audioContext && audioContext.state === 'running') {
+            audioContext.suspend();
+        }
         isMusicPlaying = false;
         updateMusicIcons();
     }
@@ -131,12 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Page Visibility Logic ---
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
-            if (isMusicPlaying) {
-                bgMusic.pause();
+            if (isMusicPlaying && audioContext && audioContext.state === 'running') {
+                audioContext.suspend();
             }
         } else {
-            if (isMusicPlaying) {
-                bgMusic.play().catch(err => console.log("Resume blocked by browser", err));
+            if (isMusicPlaying && audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
             }
         }
     });
