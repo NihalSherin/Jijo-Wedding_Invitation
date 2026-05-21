@@ -1,0 +1,625 @@
+/* ==========================================================================
+   Base Styles & Variables
+   ========================================================================== */
+:root {
+    --primary-color: #58a0b9; /* Teal/Blue */
+    --secondary-color: #f7ede2; /* Soft watercolor background base */
+    --text-primary: #5c676d; /* Darkish grey for readable text */
+    --text-gold: #b38b4d; /* Goldish text for headers */
+    --text-teal: #58a0b9;
+    --font-script: 'Pinyon Script', cursive;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Montserrat', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--secondary-color); /* Soft cream behind everything instead of black */
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+.hidden {
+    display: none !important;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-outline {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* ==========================================================================
+   Door Landing Screen
+   ========================================================================== */
+.door-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    overflow: hidden;
+    background-color: transparent; /* No black background */
+}
+
+.door {
+    position: relative;
+    width: 50%;
+    height: 100%;
+    background-image: url('../img/door_blur_bg.png');
+    background-size: cover;
+    background-position: center;
+    transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 10;
+}
+
+.door-left {
+    background-position: left center;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.door-right {
+    background-position: right center;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.door-container.open .door-left {
+    transform: translateX(-100%);
+}
+
+.door-container.open .door-right {
+    transform: translateX(100%);
+}
+
+/* Center Seal */
+.seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    z-index: 20;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.seal:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+.seal-inner {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seal-text {
+    font-family: var(--font-serif);
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.door-container.open .seal {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+/* ==========================================================================
+   Main Content Layout
+   ========================================================================== */
+.main-container {
+    opacity: 0.2; /* Start slightly faded instead of invisible */
+    transform: scale(0.98);
+    transition: opacity 1.5s ease, transform 1.5s ease; 
+    background: #fff;
+    max-width: 600px; /* Mobile-first width limitation for elegance */
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.1);
+}
+
+.main-container.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.section {
+    position: relative;
+    width: 100%;
+}
+
+/* Typography Defaults */
+.ampersand {
+    font-family: var(--font-script);
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: normal;
+}
+
+.hero-section .ampersand {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.35em;
+    color: var(--text-gold);
+    display: inline-block;
+    margin: 5px 0;
+}
+
+/* ==========================================================================
+   Hero Section (Floral Frame)
+   ========================================================================== */
+.hero-section {
+    min-height: 100vh;
+    background-image: url('../img/floral_bg_no_frame.png');
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 150px), transparent 100%);
+    mask-image: linear-gradient(to bottom, black calc(100% - 150px), transparent 100%);
+}
+
+.frame-container {
+    width: 100%;
+    max-width: 400px;
+    /* In case the generated frame has an empty center, we align text perfectly inside it */
+    position: relative;
+    padding: 20% 10%; 
+    text-align: center;
+}
+
+.invite-intro {
+    font-family: var(--font-serif);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-gold);
+    letter-spacing: 5px;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    line-height: 1.6;
+}
+
+.couple-names {
+    font-family: var(--font-script);
+    font-size: 5.5rem;
+    line-height: 0.8;
+    color: var(--text-gold);
+    margin-bottom: 1.5rem;
+    font-weight: normal;
+    text-shadow: none;
+}
+
+.divider-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-gold);
+    margin: 1.5rem 0;
+    opacity: 1;
+}
+
+.divider-ornament svg {
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+}
+
+.date-time-primary {
+    font-family: var(--font-serif);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-gold);
+    letter-spacing: 4px;
+    line-height: 1.5;
+    margin: 1rem 0;
+}
+
+/* ==========================================================================
+   Details Section
+   ========================================================================== */
+.details-section, .countdown-section {
+    background-image: url('../img/watercolor_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Parallax effect */
+    text-align: center;
+}
+
+.details-section {
+    margin-top: -150px;
+    position: relative;
+    z-index: 1;
+}
+
+.watercolor-overlay {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 4rem 2rem;
+    height: 100%;
+}
+
+.details-section .watercolor-overlay {
+    padding-top: calc(4rem + 150px);
+}
+
+.parents-names h2 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--text-teal);
+    letter-spacing: 2px;
+}
+
+.parents-names .ampersand {
+    display: block;
+    font-size: 2.5rem;
+    margin: -10px 0;
+}
+
+.invite-text {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    color: var(--text-teal);
+    margin: 2rem auto;
+    max-width: 80%;
+    line-height: 1.6;
+}
+
+.couple-names-secondary {
+    font-family: var(--font-script);
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 3rem;
+}
+
+.event-details {
+    margin-bottom: 3rem;
+}
+
+.detail-block {
+    margin-bottom: 2rem;
+}
+
+.detail-block h3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    color: var(--text-teal);
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-block p {
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.venue-name {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.venue-address {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   Countdown & Wishes Section
+   ========================================================================== */
+.section-title {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--text-teal);
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 4rem;
+}
+
+.time-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-box .number {
+    font-family: var(--font-sans);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--text-teal);
+    line-height: 1;
+}
+
+.time-box .label {
+    font-size: 0.8rem;
+    color: var(--text-teal);
+    text-transform: capitalize;
+    margin-top: 5px;
+}
+
+.wishes-list {
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.wish-item p {
+    font-family: var(--font-sans);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--text-teal);
+    margin-bottom: 0.5rem;
+}
+
+.wish-item h4 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-teal);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 3rem;
+}
+
+.flex-btn {
+    width: 100%;
+    max-width: 250px;
+}
+
+.footer-design {
+    font-family: var(--font-script);
+    color: var(--text-teal);
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.logo-small {
+    background: var(--text-teal);
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* ==========================================================================
+   Bottom Navigation
+   ========================================================================== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 1s ease 1s; /* Fades in after main content */
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+}
+
+.bottom-nav.visible {
+    opacity: 1;
+}
+
+.nav-item {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* ==========================================================================
+   Responsive & Animations
+   ========================================================================== */
+@media (max-width: 600px) {
+    .frame-container { padding: 25% 10%; }
+    .couple-names { font-size: 4.5rem; }
+}
+
+@media (max-width: 480px) {
+    .couple-names { font-size: 3.8rem; }
+    .couple-names-secondary { font-size: 3rem; }
+    .time-box .number { font-size: 2rem; }
+    .time-box .label { font-size: 0.75rem; }
+    .parents-names h2 { font-size: 1.2rem; }
+    .invite-text { font-size: 0.9rem; max-width: 95%; }
+    .divider-ornament svg { max-width: 220px; }
+}
+
+@media (max-width: 360px) {
+    .frame-container { padding: 30% 8%; }
+    .couple-names { font-size: 3.2rem; }
+    .couple-names-secondary { font-size: 2.5rem; }
+    .invite-intro { font-size: 0.7rem; letter-spacing: 2px; }
+    .date-time-primary { font-size: 0.75rem; letter-spacing: 2px; }
+    .divider-ornament svg { max-width: 180px; }
+    .time-box .number { font-size: 1.6rem; }
+    .detail-block h3 { font-size: 1rem; }
+    .detail-block p { font-size: 0.9rem; }
+}
+
+/* Fix landscape orientations on small devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section { min-height: 150vh; }
+    .frame-container { padding: 10% 5%; }
+}
+
+/* Fade in animation class for scroll revealing */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-up.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   Location Modal
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-overlay.hidden .modal-content {
+    transform: scale(0.9);
+}
+
+.modal-title {
+    font-family: var(--font-sans);
+    color: var(--text-teal);
+    margin-bottom: 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: var(--text-teal);
+}
+
