@@ -95,26 +95,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let audioBuffer;
     let sourceNode;
     let audioInitialized = false;
+    let audioInitPromise = null;
 
-    async function initAudio() {
-        if (audioInitialized) return;
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        try {
-            const response = await fetch('assets/audio/golden_hour.mp3');
-            const arrayBuffer = await response.arrayBuffer();
-            audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            audioInitialized = true;
-        } catch (error) {
-            console.error('Error loading audio:', error);
-        }
+    function initAudio() {
+        if (audioInitPromise) return audioInitPromise;
+        
+        audioInitPromise = (async () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            try {
+                const response = await fetch('assets/audio/golden_hour.mp3');
+                const arrayBuffer = await response.arrayBuffer();
+                audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                audioInitialized = true;
+            } catch (error) {
+                console.error('Error loading audio:', error);
+                audioInitPromise = null; // Allow retrying if it failed
+            }
+        })();
+        
+        return audioInitPromise;
     }
 
-    // Call initAudio early to start downloading the audio file
+    // Call initAudio early to start downloading the audio file immediately
     initAudio();
 
     function playMusic() {
         if (!audioInitialized) {
-            // Wait for it if not loaded yet
+            // Wait for the already-started initialization to finish
             initAudio().then(() => {
                 if (audioBuffer) startAudio();
             });
