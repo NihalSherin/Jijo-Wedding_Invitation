@@ -11,7 +11,7 @@ const weddingConfig = {
 document.addEventListener('DOMContentLoaded', () => {
 
     // Apply configuration to DOM
-    document.title = `${weddingConfig.brideName} & ${weddingConfig.groomName} Wedding Invitation`;
+    document.title = `${weddingConfig.groomName} & ${weddingConfig.brideName} Wedding Invitation`;
     document.getElementById('seal-initials').innerText = weddingConfig.initials;
     document.getElementById('bride-name-1').innerText = weddingConfig.brideName;
     document.getElementById('groom-name-1').innerText = weddingConfig.groomName;
