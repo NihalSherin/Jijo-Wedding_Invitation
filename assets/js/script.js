@@ -133,7 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function startAudio() {
         if (audioContext && audioContext.state === 'suspended') {
             audioContext.resume();
-        } else if (!sourceNode) {
+        }
+        if (!sourceNode) {
             sourceNode = audioContext.createBufferSource();
             sourceNode.buffer = audioBuffer;
             sourceNode.loop = true;
