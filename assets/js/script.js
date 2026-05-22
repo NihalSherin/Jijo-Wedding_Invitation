@@ -275,4 +275,78 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Particles System ---
+    const canvas = document.getElementById('particles-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        function setCanvasSize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        setCanvasSize();
+
+        window.addEventListener('resize', () => {
+            setCanvasSize();
+            initParticles();
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 0.5; // 0.5 to 3 px
+                this.speedX = Math.random() * 0.4 - 0.2; // -0.2 to 0.2 (slower drifting)
+                this.speedY = Math.random() * 0.4 + 0.1; // 0.1 to 0.5 (falling downwards)
+                // Snow-like color palette
+                const colors = ['rgba(255, 255, 255, 0.9)', 'rgba(240, 248, 255, 0.7)', 'rgba(255, 250, 250, 0.6)', 'rgba(255, 255, 255, 0.4)'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap around edges (snow falls down)
+                if (this.y > canvas.height) {
+                    this.y = 0 - this.size;
+                    this.x = Math.random() * canvas.width;
+                }
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add a subtle glow
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000); // Responsive amount
+            if(numberOfParticles > 60) numberOfParticles = 60; // Cap it so it's not too much
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+    }
+
 });

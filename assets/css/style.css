@@ -623,3 +623,16 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-teal);
 }
 
+/* ==========================================================================
+   Particles Overlay
+   ========================================================================== */
+.particles-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5; /* Above background but behind the text/modals */
+}
+
